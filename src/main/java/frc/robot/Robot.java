@@ -8,13 +8,16 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.ExampleCommand;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.DriverControls;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Shooter;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
+
+// Sceduler needs to run every period to keep the robot running
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,9 +27,10 @@ import frc.robot.subsystems.ExampleSubsystem;
  * project.
  */
 public class Robot extends TimedRobot {
-  public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
-  public static DriveTrain driveTrain = new DriveTrain();
-  public static OI m_oi;
+  public static OI oi;
+  public static DriveTrain driveTrain;
+  public static Shooter shooter;
+  public static DriverControls driverControls;
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -37,8 +41,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_oi = new OI();
-    m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
+    oi = new OI();
+    driveTrain = new DriveTrain();
+    shooter = new Shooter();
+
+    driverControls = new DriverControls();
+
+
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
   }
@@ -66,7 +75,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    Scheduler.getInstance().run();
+    // update the joystick values
+    // all the code goes after this function
+    oi.update();
+
+    CommandScheduler.getInstance().run();
   }
 
   /**
@@ -93,7 +106,7 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.start();
+      m_autonomousCommand.schedule();
     }
   }
 
@@ -102,7 +115,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    Scheduler.getInstance().run();
+    // update the joystick values
+    // all the code goes after this function
+    oi.update();
+
+    CommandScheduler.getInstance().run();
   }
 
   @Override
@@ -121,7 +138,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    Scheduler.getInstance().run();
+    // update the joystick values
+    // all the code goes after this function
+    oi.update();
+
+    CommandScheduler.getInstance().run();
   }
 
   /**
@@ -129,5 +150,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    // update the joystick values
+    // all the code goes after this function
+    oi.update();
   }
 }
